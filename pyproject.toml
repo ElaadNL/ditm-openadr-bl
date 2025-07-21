@@ -3,7 +3,7 @@ name = "reference-openadr-bl-gac"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Nick van der Burgt",email = "nick.van.der.burgt@elaad.nl"}
+    {name = "Nick van der Burgt", email = "nick.van.der.burgt@elaad.nl"}
 ]
 readme = "README.md"
 requires-python = ">=3.12, <4"
@@ -13,7 +13,8 @@ dependencies = [
     "python-decouple (>=3.8,<4.0)",
     "influxdb-client[async] (>=1.49.0,<2.0.0)",
     "ruff (>=0.12.4,<0.13.0)",
-    "mypy (>=1.17.0,<2.0.0)"
+    "mypy (>=1.17.0,<2.0.0)",
+    "pytest (>=8.4.1,<9.0.0)"
 ]
 
 [build-system]
@@ -23,6 +24,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 # We do not have to package our API, so disable packaging.
 package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+pytest-cov = "^6.2.1"
 
 [[tool.mypy.overrides]]
 module = ["decouple"]
