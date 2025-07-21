@@ -3,7 +3,7 @@
 
 # Reference OpenADR GAC BL Implementation
 
-This repository contains a barebones reference implementation which can be used as a reference for a GAC compliant BL implementation.
+This repository contains a reference implementation for a GAC compliant BL implementation.
 
 ## Configuration
 
