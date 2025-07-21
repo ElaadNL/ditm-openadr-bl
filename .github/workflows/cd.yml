@@ -41,7 +41,7 @@ jobs:
   ghcr-publish:
     runs-on: ubuntu-latest
     needs:
-      - release-build# url: https://pypi.org/project/YOURPROJECT/${{ github.event.release.name }}
+      - release-build
     steps:
       - name: Retrieve release distributions
         uses: actions/download-artifact@v4
