@@ -3,12 +3,17 @@ from datetime import datetime
 from openadr3_client.models.event.event import Event, NewEvent
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.event.event_payload import EventPayload, EventPayloadType, EventPayloadDescriptor
+from openadr3_client.models.event.event_payload import (
+    EventPayload,
+    EventPayloadType,
+    EventPayloadDescriptor,
+)
 from openadr3_client.models.common.unit import Unit
 
 from src.logger import logger
 from src.config import MAX_CAPACITY, PROGRAM_ID
 from src.models.predicted_load import PredictedGridAssetLoad
+
 
 class PredictionActionsBase[ReadOnlySession](ABC):
     """Abstract class which contains methods used by this workflow.
@@ -36,11 +41,12 @@ class PredictionActionsBase[ReadOnlySession](ABC):
             list[PredictedGridAssetLoad]: The list of predicted grid asset loads.
         """
 
+
 def _generate_capacity_limitation_intervals(
-        interval_id: int,
-        predicted_grid_asset_loads: PredictedGridAssetLoad,
-        max_capacity: float
-    ) -> Interval[EventPayload]:
+    interval_id: int,
+    predicted_grid_asset_loads: PredictedGridAssetLoad,
+    max_capacity: float,
+) -> Interval[EventPayload]:
     """Generate a capacity limitation interval for the given predicted grid asset load.
 
     Args:
@@ -60,15 +66,17 @@ def _generate_capacity_limitation_intervals(
         payloads=(
             EventPayload(
                 type=EventPayloadType.IMPORT_CAPACITY_LIMIT,
-                values=(predicted_grid_asset_loads.flex_capacity_required(max_capacity),)
+                values=(
+                    predicted_grid_asset_loads.flex_capacity_required(max_capacity),
+                ),
             ),
-        )
+        ),
     )
 
+
 def _generate_capacity_limitation_event(
-        predicted_grid_asset_loads: list[PredictedGridAssetLoad],
-        max_capacity: float
-    ) -> Event:
+    predicted_grid_asset_loads: list[PredictedGridAssetLoad], max_capacity: float
+) -> Event:
     """Generate a capacity limitation event for the given predicted grid asset load.
 
     Args:
@@ -79,18 +87,29 @@ def _generate_capacity_limitation_event(
         Event: The capacity limitation event.
     """
     intervals = [
-        _generate_capacity_limitation_intervals(interval_id, predicted_grid_asset_load, max_capacity) for interval_id, predicted_grid_asset_load in enumerate(predicted_grid_asset_loads)]
+        _generate_capacity_limitation_intervals(
+            interval_id, predicted_grid_asset_load, max_capacity
+        )
+        for interval_id, predicted_grid_asset_load in enumerate(
+            predicted_grid_asset_loads
+        )
+    ]
 
     return NewEvent(
         programID=PROGRAM_ID,
         event_name=f"bl-generated-event-{datetime.now().strftime('%d-%m-%Y')}",
         payload_descriptor=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.IMPORT_CAPACITY_LIMIT, units=Unit.KW),
+            EventPayloadDescriptor(
+                payload_type=EventPayloadType.IMPORT_CAPACITY_LIMIT, units=Unit.KW
+            ),
         ),
-        intervals=tuple(intervals)
+        intervals=tuple(intervals),
     )
 
-async def get_capacity_limitation_event(actions: PredictionActionsBase, from_date: datetime, to_date: datetime) -> Event | None:
+
+async def get_capacity_limitation_event(
+    actions: PredictionActionsBase, from_date: datetime, to_date: datetime
+) -> Event | None:
     """Retrieve OpenADR3 capacity limitation events between the given times.
 
     Args:
@@ -102,11 +121,15 @@ async def get_capacity_limitation_event(actions: PredictionActionsBase, from_dat
         Event | None: The OpenADR3 capacity limitation event. None if no data to base the event on could be retrieved.
     """
     query_api = await actions.get_query_api()
-    predicted_grid_asset_loads = await actions.get_predicted_grid_asset_load(query_api, from_date, to_date)
+    predicted_grid_asset_loads = await actions.get_predicted_grid_asset_load(
+        query_api, from_date, to_date
+    )
 
     # If no predictions could be retrieved, return None.
     if not predicted_grid_asset_loads:
-        logger.warning("get_capacity_limitation_event: No predictions could be retrieved, returning None.")
+        logger.warning(
+            "get_capacity_limitation_event: No predictions could be retrieved, returning None."
+        )
         return None
 
     return _generate_capacity_limitation_event(predicted_grid_asset_loads, MAX_CAPACITY)

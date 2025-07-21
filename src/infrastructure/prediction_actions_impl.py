@@ -7,7 +7,9 @@ from influxdb_client.client.query_api_async import QueryApiAsync
 
 from src.application.generate_events import PredictionActionsBase
 from src.config import INFLUXDB_BUCKET
-from src.infrastructure.influxdb.prediction_retrieval import retrieve_predicted_grid_asset_load
+from src.infrastructure.influxdb.prediction_retrieval import (
+    retrieve_predicted_grid_asset_load,
+)
 from src.models.predicted_load import PredictedGridAssetLoad
 
 
@@ -47,4 +49,9 @@ class PredictionActionsInfluxDB(PredictionActionsBase[QueryApiAsync]):
         Returns:
             list[TransformerLoad]: The list of predicted transformer loads.
         """
-        return await retrieve_predicted_grid_asset_load(query_api=query_api, bucket=INFLUXDB_BUCKET, from_date=from_date, to_date=to_date)
+        return await retrieve_predicted_grid_asset_load(
+            query_api=query_api,
+            bucket=INFLUXDB_BUCKET,
+            from_date=from_date,
+            to_date=to_date,
+        )

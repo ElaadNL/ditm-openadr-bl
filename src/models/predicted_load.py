@@ -1,4 +1,3 @@
-
 """Module containing models representing predicted load on a grid asset."""
 
 from datetime import datetime, timedelta
@@ -7,7 +6,9 @@ from datetime import datetime, timedelta
 class PredictedGridAssetLoad:
     """Represents the load on a grid asset at a specific time."""
 
-    def __init__(self, time: datetime, load: float, duration: timedelta = timedelta(minutes=15)) -> None:
+    def __init__(
+        self, time: datetime, load: float, duration: timedelta = timedelta(minutes=15)
+    ) -> None:
         """Initializes a predicted grid asset load object.
 
         Args:
@@ -26,7 +27,11 @@ class PredictedGridAssetLoad:
             other: The value to compare
         """
         if isinstance(other, PredictedGridAssetLoad):
-            return self.time == other.time and self.load == other.load and self.duration == other.duration
+            return (
+                self.time == other.time
+                and self.load == other.load
+                and self.duration == other.duration
+            )
 
         return False
 

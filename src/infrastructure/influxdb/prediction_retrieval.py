@@ -5,7 +5,9 @@ from influxdb_client.client.query_api_async import QueryApiAsync
 from src.models.predicted_load import PredictedGridAssetLoad
 
 
-async def retrieve_predicted_grid_asset_load(query_api: QueryApiAsync, bucket: str, from_date: datetime, to_date: datetime) -> list[PredictedGridAssetLoad]:
+async def retrieve_predicted_grid_asset_load(
+    query_api: QueryApiAsync, bucket: str, from_date: datetime, to_date: datetime
+) -> list[PredictedGridAssetLoad]:
     """Retrieve predicted grid asset load from the database between the given times.
 
     Args:
@@ -30,7 +32,6 @@ async def retrieve_predicted_grid_asset_load(query_api: QueryApiAsync, bucket: s
     predicted_loads = await query_api.query(query=query)
     flattened_predicted_loads = predicted_loads.to_values(columns=["_time", "_value"])
 
-    
     return [
         PredictedGridAssetLoad(time=predicted_load[0], load=predicted_load[1])  # type: ignore[arg-type]
         for predicted_load in flattened_predicted_loads

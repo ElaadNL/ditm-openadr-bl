@@ -10,11 +10,13 @@ def initialize_bl_client() -> BusinessLogicClient:
     Returns:
         BusinessLogicClient: The BL client.
     """
-    bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(vtn_base_url=VTN_BASE_URL)
+    bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
+        vtn_base_url=VTN_BASE_URL
+    )
     return bl_client
 
 
-def generate_events():
+def generate_events() -> None:
     """Generate events for the VTN.
 
     Returns:
@@ -23,11 +25,7 @@ def generate_events():
     Raises:
         Exception: If the VTN is not reachable.
     """
-    bl_client = initialize_bl_client()
-
-    
-
-
+    _ = initialize_bl_client()
 
 
 if __name__ == "__main__":
