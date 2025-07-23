@@ -147,3 +147,31 @@ cython_debug/
 
 # Default pytest output
 test-output.xml
+
+.python_packages
+
+# VS Code user settings
+.vscode
+
+/secrets
+
+# Azurite
+node_modules
+coverage
+azurite-testdrive
+.nyc_output
+dist
+typings
+debug.log
+*.vsix
+*.tgz
+__*
+*.env
+temp
+**/.DS_Store.DS_Store
+*.pem
+azurite.exe
+.pkg-cache
+release
+querydb*.json
+AzuriteConfig

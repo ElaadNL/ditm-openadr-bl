@@ -8,6 +8,10 @@
 
 name: Upload Python Package
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 on:
   release:
     types: [published]
@@ -16,35 +20,41 @@ permissions:
   contents: read
 
 jobs:
-  release-build:
+  build_tag_push_to_ghcr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4 # v4
 
-      - uses: actions/setup-python@v5
+      - name: Create version tag
+        shell: bash
+        run: echo "tag=ghcr.io/elaadnl/bl-reference-implementation:$(git show -s --format="%ct-%h" $GITHUB_SHA)" >> $GITHUB_ENV
+      - name: Latest tag on main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "tag_main=,ghcr.io/elaadnl/bl-reference-implementation:latest" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v3 # v3.2.0
         with:
-          python-version: "3.x"
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build release distributions
-        run: |
-          pipx install poetry
-          poetry version ${{ github.event.release.tag_name }}
-          poetry build
-
-      - name: Upload distributions
-        uses: actions/upload-artifact@v4
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
-          name: release-dists
-          path: dist/
-
-  ghcr-publish:
-    runs-on: ubuntu-latest
-    needs:
-      - release-build
-    steps:
-      - name: Retrieve release distributions
-        uses: actions/download-artifact@v4
-        with:
-          name: release-dists
-          path: dist/
+          context: .
+          file: ./Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: "${{ env.tag }}${{ env.tag_main }}"
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

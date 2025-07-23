@@ -6,7 +6,7 @@ VTN_BASE_URL = config("VTN_BASE_URL")
 
 # The program ID of the OpenADR3 program to write the capacity limitation events to.
 # This program ID must exist in the VTN before hand.
-PROGRAM_ID = config("PROGRAM_ID", cast=int)
+PROGRAM_ID = config("PROGRAM_ID", cast=str)
 
 # The maximum capacity of the grid asset. This is used to calculate the flex capacity required based on the predicted load.
 MAX_CAPACITY = config("MAX_CAPACITY", cast=float)

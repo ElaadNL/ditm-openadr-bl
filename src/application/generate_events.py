@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from openadr3_client.models.event.event import Event, NewEvent
+from openadr3_client.models.event.event import NewEvent
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.event.event_payload import (
@@ -9,6 +9,7 @@ from openadr3_client.models.event.event_payload import (
     EventPayloadDescriptor,
 )
 from openadr3_client.models.common.unit import Unit
+from openadr3_client.models.common.target import Target
 
 from src.logger import logger
 from src.config import MAX_CAPACITY, PROGRAM_ID
@@ -67,7 +68,8 @@ def _generate_capacity_limitation_intervals(
             EventPayload(
                 type=EventPayloadType.IMPORT_CAPACITY_LIMIT,
                 values=(
-                    predicted_grid_asset_loads.flex_capacity_required(max_capacity),
+                    predicted_grid_asset_loads.flex_capacity_required(max_capacity)
+                    or 0,
                 ),
             ),
         ),
@@ -76,7 +78,7 @@ def _generate_capacity_limitation_intervals(
 
 def _generate_capacity_limitation_event(
     predicted_grid_asset_loads: list[PredictedGridAssetLoad], max_capacity: float
-) -> Event:
+) -> NewEvent:
     """Generate a capacity limitation event for the given predicted grid asset load.
 
     Args:
@@ -88,7 +90,9 @@ def _generate_capacity_limitation_event(
     """
     intervals = [
         _generate_capacity_limitation_intervals(
-            interval_id, predicted_grid_asset_load, max_capacity
+            interval_id=interval_id,
+            predicted_grid_asset_loads=predicted_grid_asset_load,
+            max_capacity=max_capacity,
         )
         for interval_id, predicted_grid_asset_load in enumerate(
             predicted_grid_asset_loads
@@ -104,12 +108,16 @@ def _generate_capacity_limitation_event(
             ),
         ),
         intervals=tuple(intervals),
+        targets=(
+            Target(type="VEN_NAME", values=("DITM-VEN",)),
+            Target(type="POWER_SERVICE_LOCATION", values=("EAN123456789012345",)),
+        ),
     )
 
 
 async def get_capacity_limitation_event(
     actions: PredictionActionsBase, from_date: datetime, to_date: datetime
-) -> Event | None:
+) -> NewEvent | None:
     """Retrieve OpenADR3 capacity limitation events between the given times.
 
     Args:
@@ -120,7 +128,7 @@ async def get_capacity_limitation_event(
     Returns:
         Event | None: The OpenADR3 capacity limitation event. None if no data to base the event on could be retrieved.
     """
-    query_api = await actions.get_query_api()
+    query_api = actions.get_query_api()
     predicted_grid_asset_loads = await actions.get_predicted_grid_asset_load(
         query_api, from_date, to_date
     )

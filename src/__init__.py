@@ -1,0 +1,1 @@
+import openadr3_client_gac_compliance  # noqa: F401 (in case you use ruff)
