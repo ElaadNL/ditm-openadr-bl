@@ -27,4 +27,5 @@ RUN poetry install --without dev
 
 COPY ./src /home/site/wwwroot/src
 
+COPY ./host.json /home/site/wwwroot
 COPY ./function_app.py /home/site/wwwroot
