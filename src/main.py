@@ -1,3 +1,5 @@
+import azure.functions as func
+
 from datetime import UTC, datetime, timedelta, timezone
 from openadr3_client.bl.http_factory import BusinessLogicHttpClientFactory
 from openadr3_client.bl._client import BusinessLogicClient
@@ -7,7 +9,6 @@ from src.application.generate_events import get_capacity_limitation_event
 from src.infrastructure.predictions_actions_stub_impl import PredictionActionsStub
 from src.logger import logger
 from src.config import VTN_BASE_URL
-import azure.functions as func
 
 bp = func.Blueprint()
 
