@@ -11,6 +11,7 @@ import azure.functions as func
 
 bp = func.Blueprint()
 
+
 def _initialize_bl_client() -> BusinessLogicClient:
     """Initialize the BL client with the base URL of the VTN.
 
