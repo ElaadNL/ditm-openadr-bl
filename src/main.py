@@ -11,8 +11,7 @@ import azure.functions as func
 
 bp = func.Blueprint()
 
-
-def initialize_bl_client() -> BusinessLogicClient:
+def _initialize_bl_client() -> BusinessLogicClient:
     """Initialize the BL client with the base URL of the VTN.
 
     Returns:
@@ -24,7 +23,7 @@ def initialize_bl_client() -> BusinessLogicClient:
     return bl_client
 
 
-async def generate_events() -> NewEvent | None:
+async def _generate_events() -> NewEvent | None:
     """Generate events for tomorrow to be published to the VTN.
 
     Returns:
@@ -51,7 +50,7 @@ async def generate_events() -> NewEvent | None:
 async def timer_trigger(myTimer: func.TimerRequest) -> None:
     try:
         logger.info("Triggering BL function at %s", datetime.now(tz=timezone.utc))
-        event = await generate_events()
+        event = await _generate_events()
 
         if not event:
             logger.warning(
@@ -59,7 +58,7 @@ async def timer_trigger(myTimer: func.TimerRequest) -> None:
             )
             return None
 
-        bl_client = initialize_bl_client()
+        bl_client = _initialize_bl_client()
         created_event = bl_client.events.create_event(new_event=event)
         logger.info("Created event with id: %s in VTN", created_event.id)
     except Exception as exc:
