@@ -1,5 +1,9 @@
 import azure.functions as func
-from src.main import bp
+
+try:
+    from src.main import bp
+except Exception as exc:
+    print(exc)
 
 app = func.FunctionApp()
 
