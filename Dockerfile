@@ -2,9 +2,6 @@
 # FROM mcr.microsoft.com/azure-functions/python:4-python3.12-appservice
 FROM mcr.microsoft.com/azure-functions/python:4-python3.12
 
-ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
-
 # Set up environment variables for Python and Poetry:
 # - PYTHONDONTWRITEBYTECODE: Prevents Python from writing pyc files to disc (equivalent to python -B option)
 # - PYTHONUNBUFFERED: Prevents Python from buffering stdout and stderr (equivalent to python -u option)
@@ -15,7 +12,9 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     POETRY_VIRTUALENVS_CREATE=0 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+    POETRY_CACHE_DIR=/tmp/poetry_cache \
+    AzureWebJobsScriptRoot=/home/site/wwwroot \
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
     
