@@ -8,14 +8,14 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12, <4"
 dependencies = [
-    "openadr3-client (>=0.0.6,<0.0.7)",
     "openadr3-client-gac-compliance (>=1.2.1,<2.0.0)",
     "python-decouple (>=3.8,<4.0)",
     "influxdb-client[async] (>=1.49.0,<2.0.0)",
     "ruff (>=0.12.4,<0.13.0)",
     "mypy (>=1.17.0,<2.0.0)",
     "pytest (>=8.4.1,<9.0.0)",
-    "azure-functions (>=1.23.0,<2.0.0)"
+    "azure-functions (>=1.23.0,<2.0.0)",
+    "openadr3-client (>=0.0.7,<0.0.8)"
 ]
 
 [build-system]

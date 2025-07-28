@@ -102,7 +102,7 @@ def _generate_capacity_limitation_event(
     return NewEvent(
         programID=PROGRAM_ID,
         event_name=f"bl-generated-event-{datetime.now().strftime('%d-%m-%Y')}",
-        payload_descriptor=(
+        payload_descriptors=(
             EventPayloadDescriptor(
                 payload_type=EventPayloadType.IMPORT_CAPACITY_LIMIT, units=Unit.KW
             ),
