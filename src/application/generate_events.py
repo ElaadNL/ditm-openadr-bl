@@ -12,7 +12,7 @@ from openadr3_client.models.common.unit import Unit
 from openadr3_client.models.common.target import Target
 
 from src.logger import logger
-from src.config import MAX_CAPACITY, PROGRAM_ID
+from src.config import MAX_CAPACITY, PROGRAM_ID, VEN_NAME
 from src.models.predicted_load import PredictedGridAssetLoad
 
 
@@ -109,7 +109,7 @@ def _generate_capacity_limitation_event(
         ),
         intervals=tuple(intervals),
         targets=(
-            Target(type="VEN_NAME", values=("DITM-VEN",)),
+            Target(type="VEN_NAME", values=(VEN_NAME,)),
             Target(type="POWER_SERVICE_LOCATION", values=("EAN123456789012345",)),
         ),
     )

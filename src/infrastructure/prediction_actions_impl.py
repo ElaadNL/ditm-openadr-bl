@@ -15,7 +15,7 @@ from src.models.predicted_load import PredictedGridAssetLoad
 
 class PredictionActionsInfluxDB(PredictionActionsBase[QueryApiAsync]):
     """Implementation of the prediction actions using influxDB.
-                                            
+
     This is implemented seperately in the infrastructure layer to promote decoupling of business
     logic for infrastructure concerns and changes.
 
