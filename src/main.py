@@ -52,7 +52,7 @@ async def _generate_events() -> NewEvent | None:
     run_on_startup=False,
     use_monitor=False,
 )
-async def timer_trigger(myTimer: func.TimerRequest) -> None:
+async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
     try:
         logger.info("Triggering BL function at %s", datetime.now(tz=timezone.utc))
         event = await _generate_events()
