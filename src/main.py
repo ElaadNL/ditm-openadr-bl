@@ -1,14 +1,16 @@
 import azure.functions as func
 
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+from zoneinfo import ZoneInfo
 from openadr3_client.bl.http_factory import BusinessLogicHttpClientFactory
 from openadr3_client.bl._client import BusinessLogicClient
 from openadr3_client.models.event.event import NewEvent
+from openadr3_client._vtn.interfaces.filters import TargetFilter
 
 from src.application.generate_events import get_capacity_limitation_event
 from src.infrastructure.predictions_actions_stub_impl import PredictionActionsStub
 from src.logger import logger
-from src.config import VTN_BASE_URL
+from src.config import PROGRAM_ID, VEN_NAME, VTN_BASE_URL
 
 bp = func.Blueprint()
 
@@ -31,12 +33,12 @@ async def _generate_events() -> NewEvent | None:
     Returns:
         list[Event]: The list of events.
     """
-    # Start time is 00:00 tomorrow.
-    start_time = (datetime.now(tz=UTC) + timedelta(days=1)).replace(
-        hour=0, minute=0, second=0, microsecond=0
-    )
-    # End time is 00:00 the day after tomorrow.
-    end_time = start_time + timedelta(days=1)
+    current_time_ams = datetime.now(ZoneInfo("Europe/Amsterdam"))
+
+    # Start time is 12:00 today.
+    start_time = current_time_ams.replace(hour=12, minute=0, second=0, microsecond=0)
+    # End time is 12:00 48 hours in the future
+    end_time = start_time + timedelta(days=2)
 
     # actions = PredictionActionsInfluxDB(client=create_db_client())
     actions = PredictionActionsStub()
@@ -46,15 +48,30 @@ async def _generate_events() -> NewEvent | None:
     )
 
 
+async def _clean_up_old_events(bl_client: BusinessLogicClient) -> None:
+    """Clean up old events from the VTN targeting the VEN of this BL that are going to be replaced by the new events."""
+    # Get all events from the VTN
+    events = bl_client.events.get_events(
+        program_id=PROGRAM_ID,
+        pagination=None,
+        target=TargetFilter(target_type="VEN_NAME", target_values=[VEN_NAME]),
+    )
+
+    for event in events:
+        bl_client.events.delete_event_by_id(event_id=event.id)
+
+    logger.info("Deleted %s old events replaced by the BL", len(events))
+
+
 @bp.schedule(
-    schedule="0 50 21 * * *",
+    schedule="0 50 5 * * *",
     arg_name="myTimer",
     run_on_startup=False,
     use_monitor=False,
 )
 async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
     try:
-        logger.info("Triggering BL function at %s", datetime.now(tz=timezone.utc))
+        logger.info("Triggering BL function at %s", datetime.now(tz=UTC))
         event = await _generate_events()
 
         if not event:
@@ -66,6 +83,9 @@ async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
         bl_client = _initialize_bl_client()
 
         try:
+            # Clean up the old events in the VTN that are going to be replaced by the new events
+            await _clean_up_old_events(bl_client=bl_client)
+            # Create the new event in the VTN.
             created_event = bl_client.events.create_event(new_event=event)
             logger.info("Created event with id: %s in VTN", created_event.id)
         except Exception as exc:
