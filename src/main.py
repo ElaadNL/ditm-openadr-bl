@@ -47,7 +47,7 @@ async def _generate_events() -> NewEvent | None:
 
 
 @bp.schedule(
-    schedule="* 50 21 * * *",
+    schedule="0 50 21 * * *",
     arg_name="myTimer",
     run_on_startup=False,
     use_monitor=False,
