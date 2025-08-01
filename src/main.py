@@ -62,13 +62,7 @@ async def _clean_up_old_events(bl_client: BusinessLogicClient) -> None:
         logger.info("Deleted old event with id replaced by the BL: %s", event.id)
 
 
-@bp.schedule(
-    schedule="0 50 5 * * *",
-    arg_name="myTimer",
-    run_on_startup=True,
-    use_monitor=False,
-)
-async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
+async def main() -> None:
     try:
         logger.info("Triggering BL function at %s", datetime.now(tz=UTC))
         event = await _generate_events()
@@ -95,3 +89,13 @@ async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
         logger.warning("Exception occurred during function execution", exc_info=exc)
 
     logger.info("Python timer trigger function executed.")
+
+
+@bp.schedule(
+    schedule="0 50 5 * * *",
+    arg_name="myTimer",
+    run_on_startup=False,
+    use_monitor=False,
+)
+async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
+    await main()
