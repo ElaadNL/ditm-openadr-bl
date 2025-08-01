@@ -66,7 +66,7 @@ async def _clean_up_old_events(bl_client: BusinessLogicClient) -> None:
 @bp.schedule(
     schedule="0 50 5 * * *",
     arg_name="myTimer",
-    run_on_startup=False,
+    run_on_startup=True,
     use_monitor=False,
 )
 async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
