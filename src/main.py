@@ -59,8 +59,7 @@ async def _clean_up_old_events(bl_client: BusinessLogicClient) -> None:
 
     for event in events:
         bl_client.events.delete_event_by_id(event_id=event.id)
-
-    logger.info("Deleted %s old events replaced by the BL", len(events))
+        logger.info("Deleted old event with id replaced by the BL: %s", event.id)
 
 
 @bp.schedule(
