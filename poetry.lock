@@ -705,6 +705,21 @@ files = [
 ]
 
 [[package]]
+name = "holidays"
+version = "0.83"
+description = "Open World Holidays Framework"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "holidays-0.83-py3-none-any.whl", hash = "sha256:e36a368227b5b62129871463697bfde7e5212f6f77e43640320b727b79a875a8"},
+    {file = "holidays-0.83.tar.gz", hash = "sha256:99b97b002079ab57dac93295933907d2aae2742ad9a4d64fe33864dfae6805fa"},
+]
+
+[package.dependencies]
+python-dateutil = "*"
+
+[[package]]
 name = "idna"
 version = "3.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -1099,14 +1114,14 @@ signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
 name = "openadr3-client"
-version = "0.0.7"
+version = "0.0.11"
 description = ""
 optional = false
 python-versions = "<4,>=3.12"
 groups = ["main"]
 files = [
-    {file = "openadr3_client-0.0.7-py3-none-any.whl", hash = "sha256:e6175fa5e92e58f1b9b11b211f10f23ff2e42f3a25fc517f13734c9fd60a991e"},
-    {file = "openadr3_client-0.0.7.tar.gz", hash = "sha256:37f841e9123ebb05f1e7cda97f9e87f9e0289553d52f3e627cfd1c91a3e62d18"},
+    {file = "openadr3_client-0.0.11-py3-none-any.whl", hash = "sha256:ce050556a5ff0566671e7c8052f99c22c3f51dc1f8665124b372277f17366ec0"},
+    {file = "openadr3_client-0.0.11.tar.gz", hash = "sha256:2a975db33d7f72fa91a260c33822c9b3def037aa03e8fff5428d1922d4e3adf6"},
 ]
 
 [package.dependencies]
@@ -1118,26 +1133,26 @@ pandera = {version = ">=0.23.1,<0.24.0", extras = ["mypy"]}
 pycountry = ">=24.6.1,<25.0.0"
 pydantic = ">=2.11.2,<3.0.0"
 pydantic-extra-types = ">=2.10.3,<3.0.0"
-python-decouple = ">=3.8,<4.0"
 requests = ">=2.32.3,<3.0.0"
 requests-oauthlib = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "openadr3-client-gac-compliance"
-version = "1.4.0"
+version = "2.0.0"
 description = ""
 optional = false
 python-versions = "<4,>=3.12"
 groups = ["main"]
 files = [
-    {file = "openadr3_client_gac_compliance-1.4.0-py3-none-any.whl", hash = "sha256:398e440232d1b568e8c3b852d8af9914b5e9c96a427aa5119d0531b119ef27cd"},
-    {file = "openadr3_client_gac_compliance-1.4.0.tar.gz", hash = "sha256:14b3b93227af8f41261e0abd078e8a37c5f2e8f4426d719ba605ee80520bfd38"},
+    {file = "openadr3_client_gac_compliance-2.0.0-py3-none-any.whl", hash = "sha256:c16e80afb386140fb51aaaee91103ab769cc3393ff1e6becadb687b634e6e7f7"},
+    {file = "openadr3_client_gac_compliance-2.0.0.tar.gz", hash = "sha256:38bc52a340dadd57d2fb9f35182a79caac46f7f29ce4a7f6fd21b28afdf8133e"},
 ]
 
 [package.dependencies]
-openadr3-client = ">=0.0.7,<1.0.0"
+openadr3-client = ">=0.0.11,<1.0.0"
 pycountry = ">=24.6.1,<25.0.0"
 pydantic = ">=2.11.2,<3.0.0"
+python-decouple = ">=3.8,<4.0"
 
 [[package]]
 name = "packaging"
@@ -1738,14 +1753,14 @@ typing-extensions = ">=4.1.1,<5.0.0"
 
 [[package]]
 name = "requests"
-version = "2.32.4"
+version = "2.32.5"
 description = "Python HTTP for Humans."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c"},
-    {file = "requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"},
+    {file = "requests-2.32.5-py3-none-any.whl", hash = "sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6"},
+    {file = "requests-2.32.5.tar.gz", hash = "sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf"},
 ]
 
 [package.dependencies]
@@ -2078,4 +2093,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12, <4"
-content-hash = "52f89cb1b8ddff689f8ba349fda65dff0df7a737f70c5e7236a97ed9865f3886"
+content-hash = "65b711b44ff4a8bb28e9c4805797f2b1a8e0c664507c335aa04b4f1cb0f98670"

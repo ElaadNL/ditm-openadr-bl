@@ -21,3 +21,18 @@ INFLUXDB_BUCKET = config("INFLUXDB_BUCKET")
 # INFLUXDB parameters (secrets)
 INFLUXDB_TOKEN = config("INFLUXDB_TOKEN")
 INFLUXDB_URL = config("INFLUXDB_URL")
+
+PREDICTED_TRAFO_LOAD_BUCKET = config(
+    "PREDICTED_TRAFO_LOAD_BUCKET", default="ditm_model_output"
+)
+STANDARD_PROFILES_BUCKET_NAME = config("STANDARD_PROFILES_BUCKET_NAME", default="ditm_standard_profiles")
+DALIDATA_BUCKET_NAME = config("DALIDATA_BUCKET_NAME", default="dalidata")
+
+# External services URLs
+WEATHER_FORECAST_API_URL = config("WEATHER_FORECAST_API_URL")
+
+# Authentication to Azure ML managed endpoint for prediction model
+DITM_MODEL_API_URL = config("DITM_MODEL_API_URL")
+DITM_MODEL_API_CLIENT_ID = config("DITM_MODEL_API_CLIENT_ID")
+DITM_MODEL_API_CLIENT_SECRET = config("DITM_MODEL_API_CLIENT_SECRET")
+DITM_MODEL_API_TOKEN_URL = config("DITM_MODEL_API_TOKEN_URL")
