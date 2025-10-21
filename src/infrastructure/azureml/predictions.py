@@ -50,7 +50,7 @@ def get_predictions_for_features(features: pd.DataFrame) -> list[PredictedGridAs
     copied_features = features.copy()
     altered_features = copied_features.reset_index(drop=True).drop(columns=["datetime"])
     altered_features.fillna(0, inplace=True)
-    
+
     session = _BearerAuthenticatedSession(scopes=["https://ml.azure.com/.default"])
     headers = {'Content-Type':'application/json', 'Accept': 'application/json'}
     payload = _DitmPredictionPayload(

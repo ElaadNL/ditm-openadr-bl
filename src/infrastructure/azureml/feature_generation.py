@@ -27,9 +27,9 @@ def _get_weather_features_for_dates(start_date_inclusive: datetime, end_date_inc
 
     for d in dates:
         forecast_for_date = weather_forecast.etl_weather_forecast_data(d)
-        pd.concat([forecasts_df, forecast_for_date], axis=1)
+        forecasts_df = pd.concat([forecasts_df, forecast_for_date], axis=1)
 
-    return forecasts_df
+    return forecasts_df.rename(columns={"date_time": "datetime"})
 
 def _get_time_features_for_dates(start_date_inclusive: datetime, end_date_inclusive: datetime) -> pd.DataFrame:
     """Get time features for each date between the given datetime range.
@@ -131,6 +131,7 @@ def _get_mock_standard_profile_features(start_date_inclusive: datetime, end_date
     })
 
     predict_datetimes_df["scaled_profile"] = 0
+
     return predict_datetimes_df
 
 async def get_features_between_dates(query_api: QueryApiAsync, start_date_inclusive: datetime, end_date_inclusive: datetime) -> pd.DataFrame:
@@ -152,4 +153,5 @@ async def get_features_between_dates(query_api: QueryApiAsync, start_date_inclus
     # standard_profiles = await retrieve_standard_profiles_between_dates(query_api, start_date_inclusive, end_date_inclusive)
     standard_profiles = _get_mock_standard_profile_features(start_date_inclusive, end_date_inclusive)
 
+    # TODO: FIX CONCAT HERE, duplicate rows for some reason
     return pd.concat([features, time_features, lag_features, weather_features, standard_profiles], axis=1)

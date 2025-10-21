@@ -88,7 +88,7 @@ class WeatherForecastData:
         """
         forecast_dict = self._call_weather_forecast_api(forecast_date=forecast_date)
 
-        weather_data = pd.DataFrame({"date_time": forecast_dict["hourly"]["time"][:-1]})
+        weather_data = pd.DataFrame({"datetime": forecast_dict["hourly"]["time"][:-1]})
         weather_data = concat(
             objs=[
                 weather_data,
@@ -98,7 +98,7 @@ class WeatherForecastData:
             ],
             axis=1,
         )
-        weather_data["date_time"] = pd.to_datetime(arg=weather_data["date_time"], utc=True)
+        weather_data["datetime"] = pd.to_datetime(arg=weather_data["datetime"], utc=True)
         weather_data["snow"] = weather_data["snow"].apply(func=lambda x: (x > 0) * 1)
         weather_data["cloud_coverage"] = weather_data["cloud_coverage"].apply(func=lambda x: int(x / 100 * 9))
         weather_data["irradiation_duration"] = weather_data["irradiation_duration"].apply(
@@ -110,19 +110,19 @@ class WeatherForecastData:
 
         # Generate 15-minute intervals over the date range
         full_date_range = pd.date_range(
-            start=weather_data["date_time"].iloc[0].tz_localize(None),
-            end=weather_data["date_time"].iloc[-1].tz_localize(None).date() + timedelta(days=1),
+            start=weather_data["datetime"].iloc[0].tz_localize(None),
+            end=weather_data["datetime"].iloc[-1].tz_localize(None).date() + timedelta(days=1),
             freq="15min",
             tz="UTC",
         )
 
         # Reindex and interpolate missing values
         self.weather_data = (
-            weather_data.set_index("date_time")
+            weather_data.set_index("datetime")
             .reindex(full_date_range)
             .iloc[:-1]
             .reset_index()
-            .rename(columns={"index": "date_time"})
+            .rename(columns={"index": "datetime"})
         ).fillna(0)
 
         # Interpolate values of features to 15 min interval
