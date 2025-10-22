@@ -78,18 +78,18 @@ async def main() -> None:
             )
             return None
 
-        # bl_client = _initialize_bl_client()
+        bl_client = _initialize_bl_client()
 
-        # try:
-        #     # Clean up the old events in the VTN that are going to be replaced by the new events
-        #     await _clean_up_old_events(bl_client=bl_client)
-        #     # Create the new event in the VTN.
-        #     created_event = bl_client.events.create_event(new_event=event)
-        #     logger.info("Created event with id: %s in VTN", created_event.id)
-        # except Exception as exc:
-        #     logger.warning(
-        #         "Exception occurred during event creation in the VTN", exc_info=exc
-        #     )
+        try:
+            # Clean up the old events in the VTN that are going to be replaced by the new events
+            await _clean_up_old_events(bl_client=bl_client)
+            # Create the new event in the VTN.
+            created_event = bl_client.events.create_event(new_event=event)
+            logger.info("Created event with id: %s in VTN", created_event.id)
+        except Exception as exc:
+            logger.warning(
+                "Exception occurred during event creation in the VTN", exc_info=exc
+            )
     except Exception as exc:
         logger.warning("Exception occurred during function execution", exc_info=exc)
 
