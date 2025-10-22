@@ -6,7 +6,7 @@ This module provides:
 - etl_weather_forecast_data: Function that extracts, transforms and loads weather forecast data.
 """
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any
 
 import pandas as pd
@@ -31,7 +31,9 @@ class WeatherForecastData:
             "snowfall": "snow",
         }
 
-    def _call_weather_forecast_api(self, start_time_inclusive: datetime, end_time_inclusive: datetime) -> dict:
+    def _call_weather_forecast_api(
+        self, start_time_inclusive: datetime, end_time_inclusive: datetime
+    ) -> dict:
         """Calls the Open-Meteo API to retrieve hourly weather forecast data.
 
         Args:
@@ -64,9 +66,9 @@ class WeatherForecastData:
         """."""
         match weather_var:
             case "temperature":
-                self.weather_data[weather_var] = self.weather_data[weather_var].interpolate(
-                    method="linear", limit=3, limit_direction="forward"
-                )
+                self.weather_data[weather_var] = self.weather_data[
+                    weather_var
+                ].interpolate(method="linear", limit=3, limit_direction="forward")
 
             case "irradiation" | "irradiation_duration" | "rain" | "humidity":
                 self.weather_data[weather_var] = (
@@ -78,7 +80,9 @@ class WeatherForecastData:
             case "cloud_coverage" | "snow":
                 self.weather_data[weather_var] = self.weather_data[weather_var].ffill()
 
-    def etl_weather_forecast_data(self, start_time_inclusive: datetime, end_time_inclusive: datetime) -> pd.DataFrame:
+    def etl_weather_forecast_data(
+        self, start_time_inclusive: datetime, end_time_inclusive: datetime
+    ) -> pd.DataFrame:
         """Extracts, transforms, and loads weather forecast data.
 
         - Extracts and transforms the forecast data.
@@ -92,22 +96,33 @@ class WeatherForecastData:
         Returns:
             Processed DataFrame with interpolated weather data at 15-minute intervals.
         """
-        forecast_dict = self._call_weather_forecast_api(start_time_inclusive, end_time_inclusive)
+        forecast_dict = self._call_weather_forecast_api(
+            start_time_inclusive, end_time_inclusive
+        )
 
         weather_data = pd.DataFrame({"datetime": forecast_dict["hourly"]["time"]})
         weather_data = concat(
             objs=[
                 weather_data,
                 pd.DataFrame(
-                    {value: forecast_dict["hourly"][key] for key, value in self.om_weather_forecast_vars.items()}
+                    {
+                        value: forecast_dict["hourly"][key]
+                        for key, value in self.om_weather_forecast_vars.items()
+                    }
                 ),
             ],
             axis=1,
         )
-        weather_data["datetime"] = pd.to_datetime(arg=weather_data["datetime"], utc=True)
+        weather_data["datetime"] = pd.to_datetime(
+            arg=weather_data["datetime"], utc=True
+        )
         weather_data["snow"] = weather_data["snow"].apply(func=lambda x: (x > 0) * 1)
-        weather_data["cloud_coverage"] = weather_data["cloud_coverage"].apply(func=lambda x: int(x / 100 * 9))
-        weather_data["irradiation_duration"] = weather_data["irradiation_duration"].apply(
+        weather_data["cloud_coverage"] = weather_data["cloud_coverage"].apply(
+            func=lambda x: int(x / 100 * 9)
+        )
+        weather_data["irradiation_duration"] = weather_data[
+            "irradiation_duration"
+        ].apply(
             func=lambda x: x / 3600 if x != -1 else x
         )  # Irradiation duration is in 0.1 hours, converted to seconds
         weather_data["irradiation"] = weather_data["irradiation"].apply(
@@ -131,7 +146,9 @@ class WeatherForecastData:
             .rename(columns={"index": "datetime"})
         ).fillna(0)
 
-        self.weather_data["datetime"] = self.weather_data["datetime"] = self.weather_data["datetime"].dt.tz_convert("Europe/Amsterdam")
+        self.weather_data["datetime"] = self.weather_data["datetime"] = (
+            self.weather_data["datetime"].dt.tz_convert("Europe/Amsterdam")
+        )
 
         # Interpolate values of features to 15 min interval
         for weather_var in self.om_weather_forecast_vars.values():

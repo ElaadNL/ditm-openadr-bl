@@ -1,5 +1,3 @@
-import asyncio
-import json
 import azure.functions as func
 
 from datetime import UTC, datetime, timedelta
@@ -26,9 +24,9 @@ def _initialize_bl_client() -> BusinessLogicClient:
     """
     bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
         vtn_base_url=VTN_BASE_URL,
-        client_id='test',
-        client_secret='test',
-        token_url='test',
+        client_id="test",
+        client_secret="test",
+        token_url="test",
     )
     return bl_client
 
@@ -71,7 +69,7 @@ async def main() -> None:
     try:
         logger.info("Triggering BL function at %s", datetime.now(tz=UTC))
         event = await _generate_events()
-        
+
         if not event:
             logger.warning(
                 "No capacity limitation event could be constructed, skipping..."
@@ -95,8 +93,10 @@ async def main() -> None:
 
     logger.info("Python timer trigger function executed.")
 
+
 # if __name__ == "__main__":
 #     asyncio.run(main())
+
 
 @bp.schedule(
     schedule="0 55 5 * * *",

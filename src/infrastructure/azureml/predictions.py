@@ -1,15 +1,20 @@
-from datetime import datetime, timedelta
-import json
+from datetime import timedelta
 from typing import Any
 
-from src.config import DITM_MODEL_API_URL, DITM_MODEL_API_CLIENT_ID, DITM_MODEL_API_CLIENT_SECRET
-from src.infrastructure._auth.http.authenticated_session import _BearerAuthenticatedSession
-from src.infrastructure._auth.token_manager import OAuthTokenManager
+from src.config import (
+    DITM_MODEL_API_URL,
+)
+from src.infrastructure._auth.http.authenticated_session import (
+    _BearerAuthenticatedSession,
+)
 from src.models.predicted_load import PredictedGridAssetLoad
 import pandas as pd
 
+
 class _DitmPredictionPayload:
-    def __init__(self, columns: list[str], index: list[int], data: list[Any], params: dict) -> None:
+    def __init__(
+        self, columns: list[str], index: list[int], data: list[Any], params: dict
+    ) -> None:
         """Create a DITM predictions payload
 
         Args:
@@ -33,12 +38,15 @@ class _DitmPredictionPayload:
                 "index": self.index,
                 "data": self.data,
             },
-            "params": self.params
+            "params": self.params,
         }
 
         return data
 
-def get_predictions_for_features(features: pd.DataFrame) -> list[PredictedGridAssetLoad]:
+
+def get_predictions_for_features(
+    features: pd.DataFrame,
+) -> list[PredictedGridAssetLoad]:
     """Get transformer load predictions between the start date (exclusive) and end date (inclusive).
 
     Args:
@@ -52,7 +60,7 @@ def get_predictions_for_features(features: pd.DataFrame) -> list[PredictedGridAs
     altered_features.fillna(0, inplace=True)
 
     session = _BearerAuthenticatedSession(scopes=["https://ml.azure.com/.default"])
-    headers = {'Content-Type':'application/json', 'Accept': 'application/json'}
+    headers = {"Content-Type": "application/json", "Accept": "application/json"}
     payload = _DitmPredictionPayload(
         columns=[
             "year",
@@ -65,7 +73,7 @@ def get_predictions_for_features(features: pd.DataFrame) -> list[PredictedGridAs
             "weekofyear",
             "is_weekend",
             "is_holiday",
-            "lag_1_days", 
+            "lag_1_days",
             "lag_2_days",
             "lag_3_days",
             "lag_4_days",
@@ -80,29 +88,33 @@ def get_predictions_for_features(features: pd.DataFrame) -> list[PredictedGridAs
             "rain",
             "humidity",
             "snow",
-            "scaled_profile"
+            "scaled_profile",
         ],
         index=list(range(len(altered_features))),
         data=altered_features.values.tolist(),
-        params={}
+        params={},
     )
 
-    response = session.post(url=DITM_MODEL_API_URL, headers=headers, json=payload.as_json())
+    response = session.post(
+        url=DITM_MODEL_API_URL, headers=headers, json=payload.as_json()
+    )
 
     predictions = [float(x) for x in response.json()]
 
     if len(predictions) != len(features):
         raise ValueError("Features dataframe and predictions list did not match")
 
-    loads : list[PredictedGridAssetLoad] = []
-    
+    loads: list[PredictedGridAssetLoad] = []
+
     for index, pred in enumerate(predictions):
         matching_df_row = features.iloc[index]
         datetime_of_load = matching_df_row["datetime"][0]
         converted = pd.to_datetime(datetime_of_load, utc=True).to_pydatetime()
 
-        loads.append(PredictedGridAssetLoad(time=converted, duration=timedelta(minutes=15), load=pred))
+        loads.append(
+            PredictedGridAssetLoad(
+                time=converted, duration=timedelta(minutes=15), load=pred
+            )
+        )
 
     return loads
-
-    

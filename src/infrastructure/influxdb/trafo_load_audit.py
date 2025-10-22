@@ -1,7 +1,5 @@
 """Module which contains functions to retrieve predicted trafo load from an external database."""
 
-from datetime import datetime
-
 from influxdb_client.client.write_api_async import WriteApiAsync
 import pandas as pd
 
@@ -19,9 +17,12 @@ async def store_predictions_for_audit(
         predicted_loads (list[PredictedGridAssetLoad]): List of predicted transformer loads to write to the database.
     """
     df = pd.DataFrame(
-        [(tl.time, tl.load) for tl in predicted_loads],
-        columns=["datetime", "WAARDE"]
+        [(tl.time, tl.load) for tl in predicted_loads], columns=["datetime", "WAARDE"]
     )
 
-    await write_api.write(bucket=PREDICTED_TRAFO_LOAD_BUCKET, record=df, data_frame_measurement_name="predictions", data_frame_timestamp_column="datetime")
-    
+    await write_api.write(
+        bucket=PREDICTED_TRAFO_LOAD_BUCKET,
+        record=df,
+        data_frame_measurement_name="predictions",
+        data_frame_timestamp_column="datetime",
+    )

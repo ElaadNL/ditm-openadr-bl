@@ -5,6 +5,8 @@ from threading import Lock
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
+from src.logger import logger
+
 
 @dataclass
 class OAuthTokenManagerConfig:
@@ -20,7 +22,8 @@ class OAuthTokenManager:
 
     def __init__(self, config: OAuthTokenManagerConfig) -> None:
         self.client = BackendApplicationClient(
-            client_id=config.client_id, scope=" ".join(config.scopes) if config.scopes is not None else None
+            client_id=config.client_id,
+            scope=" ".join(config.scopes) if config.scopes is not None else None,
         )
         self.oauth = OAuth2Session(client=self.client)
         self.token_url = config.token_url
@@ -63,12 +66,16 @@ class OAuthTokenManager:
 
     def _get_new_access_token(self) -> str:
         token_response = self.oauth.fetch_token(
-            token_url=self.token_url, client_secret=self.client_secret, audience=self.audience
+            token_url=self.token_url,
+            client_secret=self.client_secret,
+            audience=self.audience,
         )
 
         # Calculate expiration time (half of token lifetime)
         expires_in_seconds = token_response.get("expires_in", 3600)
-        expiration_time = datetime.now(tz=UTC) + timedelta(seconds=expires_in_seconds // 2)
+        expiration_time = datetime.now(tz=UTC) + timedelta(
+            seconds=expires_in_seconds // 2
+        )
 
         access_token = token_response.get("access_token")
 

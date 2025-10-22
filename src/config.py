@@ -25,7 +25,9 @@ INFLUXDB_URL = config("INFLUXDB_URL")
 PREDICTED_TRAFO_LOAD_BUCKET = config(
     "PREDICTED_TRAFO_LOAD_BUCKET", default="ditm_model_output"
 )
-STANDARD_PROFILES_BUCKET_NAME = config("STANDARD_PROFILES_BUCKET_NAME", default="ditm_standard_profiles")
+STANDARD_PROFILES_BUCKET_NAME = config(
+    "STANDARD_PROFILES_BUCKET_NAME", default="ditm_standard_profiles"
+)
 DALIDATA_BUCKET_NAME = config("DALIDATA_BUCKET_NAME", default="dalidata")
 
 # External services URLs

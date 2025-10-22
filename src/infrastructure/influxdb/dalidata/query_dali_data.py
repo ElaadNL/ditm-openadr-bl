@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 import pandas as pd
@@ -6,9 +5,14 @@ import pandas as pd
 from src.config import INFLUXDB_ORG, DALIDATA_BUCKET_NAME
 from influxdb_client.client.query_api_async import QueryApiAsync
 
-async def retrieve_dali_data_between(query_api: QueryApiAsync, start_date_inclusive: datetime, end_date_inclusive: datetime) -> pd.DataFrame:
+
+async def retrieve_dali_data_between(
+    query_api: QueryApiAsync,
+    start_date_inclusive: datetime,
+    end_date_inclusive: datetime,
+) -> pd.DataFrame:
     """Retrieve standard profiles from InfluxDB between the given dates.
-    
+
     Args:
         start_date_inclusive (datetime): The start date (inclusive)
         end_date_inclusive (datetime): The end date (inclusive)

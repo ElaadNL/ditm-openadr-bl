@@ -4,9 +4,14 @@ import pandas as pd
 from src.config import INFLUXDB_ORG, STANDARD_PROFILES_BUCKET_NAME
 from influxdb_client.client.query_api_async import QueryApiAsync
 
-async def retrieve_standard_profiles_between_dates(query_api: QueryApiAsync, start_date_inclusive: datetime, end_date_inclusive: datetime) -> pd.DataFrame:
+
+async def retrieve_standard_profiles_between_dates(
+    query_api: QueryApiAsync,
+    start_date_inclusive: datetime,
+    end_date_inclusive: datetime,
+) -> pd.DataFrame:
     """Retrieve standard profiles from InfluxDB between the given dates.
-    
+
     Args:
         start_date_inclusive (datetime): The start date (inclusive)
         end_date_inclusive (datetime): The end date (inclusive)
@@ -26,8 +31,4 @@ async def retrieve_standard_profiles_between_dates(query_api: QueryApiAsync, sta
     """
 
     response = await query_api.query_data_frame(query=query, org=INFLUXDB_ORG)
-    return response.rename(
-        columns={"_time": "datumtijd"}
-    )
-    
-
+    return response.rename(columns={"_time": "datumtijd"})
