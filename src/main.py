@@ -8,7 +8,8 @@ from openadr3_client.models.event.event import NewEvent
 from openadr3_client._vtn.interfaces.filters import TargetFilter
 
 from src.application.generate_events import get_capacity_limitation_event
-from src.infrastructure.predictions_actions_stub_impl import PredictionActionsStub
+from src.infrastructure.influxdb._client import create_db_client
+from src.infrastructure.prediction_actions_impl import PredictionActionsInfluxDB
 from src.logger import logger
 from src.config import PROGRAM_ID, VEN_NAME, VTN_BASE_URL
 
@@ -22,7 +23,10 @@ def _initialize_bl_client() -> BusinessLogicClient:
         BusinessLogicClient: The BL client.
     """
     bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
-        vtn_base_url=VTN_BASE_URL
+        vtn_base_url=VTN_BASE_URL,
+        client_id="test",
+        client_secret="test",
+        token_url="test",
     )
     return bl_client
 
@@ -37,11 +41,10 @@ async def _generate_events() -> NewEvent | None:
 
     # Start time is 12:00 today.
     start_time = current_time_ams.replace(hour=12, minute=0, second=0, microsecond=0)
-    # End time is 12:00 48 hours in the future
-    end_time = start_time + timedelta(days=2)
+    # End time is 12:00 24 hours in the future
+    end_time = start_time + timedelta(days=1)
 
-    # actions = PredictionActionsInfluxDB(client=create_db_client())
-    actions = PredictionActionsStub()
+    actions = PredictionActionsInfluxDB(client=create_db_client())
 
     return await get_capacity_limitation_event(
         actions, from_date=start_time, to_date=end_time
@@ -91,8 +94,12 @@ async def main() -> None:
     logger.info("Python timer trigger function executed.")
 
 
+# if __name__ == "__main__":
+#     asyncio.run(main())
+
+
 @bp.schedule(
-    schedule="0 50 5 * * *",
+    schedule="0 55 5 * * *",
     arg_name="myTimer",
     run_on_startup=False,
     use_monitor=False,

@@ -705,6 +705,21 @@ files = [
 ]
 
 [[package]]
+name = "holidays"
+version = "0.83"
+description = "Open World Holidays Framework"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "holidays-0.83-py3-none-any.whl", hash = "sha256:e36a368227b5b62129871463697bfde7e5212f6f77e43640320b727b79a875a8"},
+    {file = "holidays-0.83.tar.gz", hash = "sha256:99b97b002079ab57dac93295933907d2aae2742ad9a4d64fe33864dfae6805fa"},
+]
+
+[package.dependencies]
+python-dateutil = "*"
+
+[[package]]
 name = "idna"
 version = "3.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -1099,14 +1114,14 @@ signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
 name = "openadr3-client"
-version = "0.0.7"
+version = "0.0.11"
 description = ""
 optional = false
 python-versions = "<4,>=3.12"
 groups = ["main"]
 files = [
-    {file = "openadr3_client-0.0.7-py3-none-any.whl", hash = "sha256:e6175fa5e92e58f1b9b11b211f10f23ff2e42f3a25fc517f13734c9fd60a991e"},
-    {file = "openadr3_client-0.0.7.tar.gz", hash = "sha256:37f841e9123ebb05f1e7cda97f9e87f9e0289553d52f3e627cfd1c91a3e62d18"},
+    {file = "openadr3_client-0.0.11-py3-none-any.whl", hash = "sha256:ce050556a5ff0566671e7c8052f99c22c3f51dc1f8665124b372277f17366ec0"},
+    {file = "openadr3_client-0.0.11.tar.gz", hash = "sha256:2a975db33d7f72fa91a260c33822c9b3def037aa03e8fff5428d1922d4e3adf6"},
 ]
 
 [package.dependencies]
@@ -1118,26 +1133,26 @@ pandera = {version = ">=0.23.1,<0.24.0", extras = ["mypy"]}
 pycountry = ">=24.6.1,<25.0.0"
 pydantic = ">=2.11.2,<3.0.0"
 pydantic-extra-types = ">=2.10.3,<3.0.0"
-python-decouple = ">=3.8,<4.0"
 requests = ">=2.32.3,<3.0.0"
 requests-oauthlib = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "openadr3-client-gac-compliance"
-version = "1.4.0"
+version = "2.0.0"
 description = ""
 optional = false
 python-versions = "<4,>=3.12"
 groups = ["main"]
 files = [
-    {file = "openadr3_client_gac_compliance-1.4.0-py3-none-any.whl", hash = "sha256:398e440232d1b568e8c3b852d8af9914b5e9c96a427aa5119d0531b119ef27cd"},
-    {file = "openadr3_client_gac_compliance-1.4.0.tar.gz", hash = "sha256:14b3b93227af8f41261e0abd078e8a37c5f2e8f4426d719ba605ee80520bfd38"},
+    {file = "openadr3_client_gac_compliance-2.0.0-py3-none-any.whl", hash = "sha256:c16e80afb386140fb51aaaee91103ab769cc3393ff1e6becadb687b634e6e7f7"},
+    {file = "openadr3_client_gac_compliance-2.0.0.tar.gz", hash = "sha256:38bc52a340dadd57d2fb9f35182a79caac46f7f29ce4a7f6fd21b28afdf8133e"},
 ]
 
 [package.dependencies]
-openadr3-client = ">=0.0.7,<1.0.0"
+openadr3-client = ">=0.0.11,<1.0.0"
 pycountry = ">=24.6.1,<25.0.0"
 pydantic = ">=2.11.2,<3.0.0"
+python-decouple = ">=3.8,<4.0"
 
 [[package]]
 name = "packaging"
@@ -1738,14 +1753,14 @@ typing-extensions = ">=4.1.1,<5.0.0"
 
 [[package]]
 name = "requests"
-version = "2.32.4"
+version = "2.32.5"
 description = "Python HTTP for Humans."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c"},
-    {file = "requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"},
+    {file = "requests-2.32.5-py3-none-any.whl", hash = "sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6"},
+    {file = "requests-2.32.5.tar.gz", hash = "sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf"},
 ]
 
 [package.dependencies]
@@ -1854,6 +1869,18 @@ files = [
 typing_extensions = ">=4.14.0"
 
 [[package]]
+name = "types-oauthlib"
+version = "3.3.0.20250822"
+description = "Typing stubs for oauthlib"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "types_oauthlib-3.3.0.20250822-py3-none-any.whl", hash = "sha256:b7f4c9b9eed0e020f454e0af800b10e93dd2efd196da65744b76910cce7e70d6"},
+    {file = "types_oauthlib-3.3.0.20250822.tar.gz", hash = "sha256:2cd41587dd80c199e4230e3f086777e9ae525e89579c64afe5e0039ab09be9de"},
+]
+
+[[package]]
 name = "types-pytz"
 version = "2025.2.0.20250516"
 description = "Typing stubs for pytz"
@@ -1864,6 +1891,37 @@ files = [
     {file = "types_pytz-2025.2.0.20250516-py3-none-any.whl", hash = "sha256:e0e0c8a57e2791c19f718ed99ab2ba623856b11620cb6b637e5f62ce285a7451"},
     {file = "types_pytz-2025.2.0.20250516.tar.gz", hash = "sha256:e1216306f8c0d5da6dafd6492e72eb080c9a166171fa80dd7a1990fd8be7a7b3"},
 ]
+
+[[package]]
+name = "types-requests"
+version = "2.32.4.20250913"
+description = "Typing stubs for requests"
+optional = false
+python-versions = ">=3.9"
+groups = ["main", "dev"]
+files = [
+    {file = "types_requests-2.32.4.20250913-py3-none-any.whl", hash = "sha256:78c9c1fffebbe0fa487a418e0fa5252017e9c60d1a2da394077f1780f655d7e1"},
+    {file = "types_requests-2.32.4.20250913.tar.gz", hash = "sha256:abd6d4f9ce3a9383f269775a9835a4c24e5cd6b9f647d64f88aa4613c33def5d"},
+]
+
+[package.dependencies]
+urllib3 = ">=2"
+
+[[package]]
+name = "types-requests-oauthlib"
+version = "2.0.0.20250809"
+description = "Typing stubs for requests-oauthlib"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "types_requests_oauthlib-2.0.0.20250809-py3-none-any.whl", hash = "sha256:0d1af4907faf9f4a1b0f0afbc7ec488f1dd5561a2b5b6dad70f78091a1acfb76"},
+    {file = "types_requests_oauthlib-2.0.0.20250809.tar.gz", hash = "sha256:f3b9b31e0394fe2c362f0d44bc9ef6d5c150a298d01089513cd54a51daec37a2"},
+]
+
+[package.dependencies]
+types-oauthlib = "*"
+types-requests = "*"
 
 [[package]]
 name = "typing-extensions"
@@ -1926,7 +1984,7 @@ version = "2.5.0"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.9"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "urllib3-2.5.0-py3-none-any.whl", hash = "sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc"},
     {file = "urllib3-2.5.0.tar.gz", hash = "sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760"},
@@ -2078,4 +2136,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12, <4"
-content-hash = "52f89cb1b8ddff689f8ba349fda65dff0df7a737f70c5e7236a97ed9865f3886"
+content-hash = "c95bb38905c80edda62bef86b0ca293abed2d4ae288f09c83974730f4eff612a"
