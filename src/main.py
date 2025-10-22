@@ -43,8 +43,8 @@ async def _generate_events() -> NewEvent | None:
 
     # Start time is 12:00 today.
     start_time = current_time_ams.replace(hour=12, minute=0, second=0, microsecond=0)
-    # End time is 12:00 48 hours in the future
-    end_time = start_time + timedelta(days=2)
+    # End time is 12:00 24 hours in the future
+    end_time = start_time + timedelta(days=1)
 
     actions = PredictionActionsInfluxDB(client=create_db_client())
 

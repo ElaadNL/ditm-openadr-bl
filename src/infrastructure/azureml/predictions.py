@@ -9,7 +9,7 @@ from src.models.predicted_load import PredictedGridAssetLoad
 import pandas as pd
 
 class _DitmPredictionPayload:
-    def __init__(self, columns: list[str], index: list[str], data: list[Any], params: dict) -> None:
+    def __init__(self, columns: list[str], index: list[int], data: list[Any], params: dict) -> None:
         """Create a DITM predictions payload
 
         Args:
@@ -82,7 +82,7 @@ def get_predictions_for_features(features: pd.DataFrame) -> list[PredictedGridAs
             "snow",
             "scaled_profile"
         ],
-        index=[],
+        index=list(range(len(altered_features))),
         data=altered_features.values.tolist(),
         params={}
     )
@@ -95,9 +95,13 @@ def get_predictions_for_features(features: pd.DataFrame) -> list[PredictedGridAs
         raise ValueError("Features dataframe and predictions list did not match")
 
     loads : list[PredictedGridAssetLoad] = []
+    
     for index, pred in enumerate(predictions):
-        matching_df_row = features.iloc(index)
-        loads.append(PredictedGridAssetLoad(time=pd.to_datetime(matching_df_row["datetime"]), duration=timedelta(minutes=15), load=pred))
+        matching_df_row = features.iloc[index]
+        datetime_of_load = matching_df_row["datetime"][0]
+        converted = pd.to_datetime(datetime_of_load, utc=True).to_pydatetime()
+
+        loads.append(PredictedGridAssetLoad(time=converted, duration=timedelta(minutes=15), load=pred))
 
     return loads
 

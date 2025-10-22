@@ -52,8 +52,16 @@ class PredictedGridAssetLoad:
         Returns:
             float: The amount of kw of flex which is needed for this grid asset load period.
         """
-        if self.load > max_capacity:
-            return self.load - max_capacity
+        min_guaranteed_capacity = 4
+        max_capacity_of_pod = 22 # TODO: configure based on input from actual battery when available.
+        max_excess = 50
 
-        # No flex capacity needed for this period.
-        return None
+        excess_load = self.load - max_capacity
+        if excess_load <= 0:
+            return 0  # not exceeding capacity
+
+        # Linear scaling from min_value to max_value
+        scaled = min_guaranteed_capacity + (max_capacity_of_pod - min_guaranteed_capacity) * (excess_load / max_excess)
+
+        # Cap to max_value
+        return min(max_capacity_of_pod, scaled)
