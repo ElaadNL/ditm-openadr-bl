@@ -95,14 +95,14 @@ async def main() -> None:
 
     logger.info("Python timer trigger function executed.")
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# if __name__ == "__main__":
+#     asyncio.run(main())
 
-# @bp.schedule(
-#     schedule="0 50 5 * * *",
-#     arg_name="myTimer",
-#     run_on_startup=False,
-#     use_monitor=False,
-# )
-# async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
-#     await main()
+@bp.schedule(
+    schedule="0 55 5 * * *",
+    arg_name="myTimer",
+    run_on_startup=False,
+    use_monitor=False,
+)
+async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
+    await main()
