@@ -32,10 +32,10 @@ jobs:
 
       - name: Create version tag
         shell: bash
-        run: echo "tag=docker.elaad.io/elaadnl/bl-reference-implementation:$(git show -s --format="%ct-%h" $GITHUB_SHA)" >> $GITHUB_ENV
+        run: echo "tag=docker.elaad.io/elaadnl/ditm-openadr-bl:$(git show -s --format="%ct-%h" $GITHUB_SHA)" >> $GITHUB_ENV
       - name: Latest tag on main branch
         if: github.ref == 'refs/heads/main'
-        run: echo "tag_main=,docker.elaad.io/elaadnl/bl-reference-implementation:latest" >> $GITHUB_ENV
+        run: echo "tag_main=,docker.elaad.io/elaadnl/ditm-openadr-bl:latest" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
