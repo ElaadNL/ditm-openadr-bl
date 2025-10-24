@@ -11,7 +11,15 @@ from src.application.generate_events import get_capacity_limitation_event
 from src.infrastructure.influxdb._client import create_db_client
 from src.infrastructure.prediction_actions_impl import PredictionActionsInfluxDB
 from src.logger import logger
-from src.config import PROGRAM_ID, VEN_NAME, VTN_BASE_URL
+from src.config import (
+    PROGRAM_ID,
+    VEN_NAME,
+    VTN_BASE_URL,
+    OAUTH_CLIENT_ID,
+    OAUTH_CLIENT_SECRET,
+    OAUTH_TOKEN_ENDPOINT,
+    OAUTH_SCOPES,
+)
 
 bp = func.Blueprint()
 
@@ -24,9 +32,10 @@ def _initialize_bl_client() -> BusinessLogicClient:
     """
     bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
         vtn_base_url=VTN_BASE_URL,
-        client_id="test",
-        client_secret="test",
-        token_url="test",
+        client_id=OAUTH_CLIENT_ID,
+        client_secret=OAUTH_CLIENT_SECRET,
+        token_url=OAUTH_TOKEN_ENDPOINT,
+        scopes=OAUTH_SCOPES.split(","),
     )
     return bl_client
 

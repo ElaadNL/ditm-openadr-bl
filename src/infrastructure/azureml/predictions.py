@@ -108,7 +108,7 @@ def get_predictions_for_features(
 
     for index, pred in enumerate(predictions):
         matching_df_row = features.iloc[index]
-        datetime_of_load = matching_df_row["datetime"][0]
+        datetime_of_load = matching_df_row["datetime"].iloc[0]
         converted = pd.to_datetime(datetime_of_load, utc=True).to_pydatetime()
 
         loads.append(
