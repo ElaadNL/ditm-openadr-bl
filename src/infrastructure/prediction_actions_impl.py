@@ -4,14 +4,16 @@ from datetime import datetime
 
 from influxdb_client.client.influxdb_client_async import InfluxDBClientAsync
 from influxdb_client.client.query_api_async import QueryApiAsync
+from influxdb_client.client.write_api_async import WriteApiAsync
 
 from src.application.generate_events import PredictionActionsBase
 from src.infrastructure.azureml.feature_generation import get_features_between_dates
 from src.infrastructure.azureml.predictions import get_predictions_for_features
 from src.models.predicted_load import PredictedGridAssetLoad
+from src.infrastructure.influxdb.trafo_load_audit import store_predictions_for_audit
 
 
-class PredictionActionsInfluxDB(PredictionActionsBase[QueryApiAsync]):
+class PredictionActionsInfluxDB(PredictionActionsBase[QueryApiAsync, WriteApiAsync]):
     """Implementation of the prediction actions using influxDB.
 
     This is implemented seperately in the infrastructure layer to promote decoupling of business
@@ -34,6 +36,10 @@ class PredictionActionsInfluxDB(PredictionActionsBase[QueryApiAsync]):
         """Retrieve a read-only connection for the database."""
         return self.client.query_api()
 
+    def get_write_api(self) -> WriteApiAsync:
+        """Retrieve a write connection for the database."""
+        return self.client.write_api()
+
     async def get_predicted_grid_asset_load(
         self, query_api: QueryApiAsync, from_date: datetime, to_date: datetime
     ) -> list[PredictedGridAssetLoad]:
@@ -53,3 +59,19 @@ class PredictionActionsInfluxDB(PredictionActionsBase[QueryApiAsync]):
             end_date_inclusive=to_date,
         )
         return get_predictions_for_features(features=features_for_time_range)
+
+    async def audit_predicted_grid_asset_loads(
+        self,
+        write_api: WriteApiAsync,
+        predicted_grid_asset_loads: list[PredictedGridAssetLoad],
+    ) -> None:
+        """Audit predicted grid asset loads by storing them in the database.
+
+        Args:
+            write_api (WriteApi): The write connection to the database.
+            predicted_grid_asset_loads (list[PredictedGridAssetLoad]): The list of predicted grid asset loads to audit.
+        """
+        await store_predictions_for_audit(
+            write_api=write_api,
+            predicted_loads=predicted_grid_asset_loads,
+        )

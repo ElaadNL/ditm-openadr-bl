@@ -28,7 +28,9 @@ PREDICTED_TRAFO_LOAD_BUCKET = config(
 STANDARD_PROFILES_BUCKET_NAME = config(
     "STANDARD_PROFILES_BUCKET_NAME", default="ditm_standard_profiles"
 )
-DALIDATA_BUCKET_NAME = config("DALIDATA_BUCKET_NAME", default="dalidata")
+DALIDATA_BUCKET_NAME = config(
+    "DALIDATA_BUCKET_NAME", default="ditm-dali-data-processed"
+)
 
 # External services URLs
 WEATHER_FORECAST_API_URL = config("WEATHER_FORECAST_API_URL")

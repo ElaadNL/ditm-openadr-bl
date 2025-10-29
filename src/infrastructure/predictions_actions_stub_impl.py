@@ -9,7 +9,7 @@ from src.application.generate_events import PredictionActionsBase
 from src.models.predicted_load import PredictedGridAssetLoad
 
 
-class PredictionActionsStub(PredictionActionsBase[None]):
+class PredictionActionsStub(PredictionActionsBase[None, None]):
     """Stub implementation of the prediction actions, generates predicted grid asset loads when called.
 
     Args:
@@ -22,6 +22,10 @@ class PredictionActionsStub(PredictionActionsBase[None]):
 
     def get_query_api(self) -> None:
         """Retrieve a read-only connection for the database."""
+        return None
+
+    def get_write_api(self) -> None:
+        """Retrieve a write connection for the database."""
         return None
 
     async def get_predicted_grid_asset_load(
@@ -54,3 +58,17 @@ class PredictionActionsStub(PredictionActionsBase[None]):
             current_time += step
 
         return predicted_grid_asset_loads
+
+    async def audit_predicted_grid_asset_loads(
+        self,
+        write_api: None,
+        predicted_grid_asset_loads: list[PredictedGridAssetLoad],
+    ) -> None:
+        """Stub implementation of auditing predicted grid asset loads.
+
+        Args:
+            write_api (None): The write connection.
+            predicted_grid_asset_loads (list[PredictedGridAssetLoad]): The list of predicted grid asset loads to audit.
+        """
+        # In this stub implementation, we do nothing.
+        pass

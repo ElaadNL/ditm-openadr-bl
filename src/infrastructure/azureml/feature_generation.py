@@ -144,28 +144,28 @@ async def _get_lag_features_for_dates(
     )
 
     predict_datetimes_df["lag_1_year"] = dalidata_df.reindex(lag_1_year_dt)[
-        "value"
+        "WAARDE"
     ].values
     predict_datetimes_df["lag_1_days"] = dalidata_df.reindex(lag_1_day_dt)[
-        "value"
+        "WAARDE"
     ].values
     predict_datetimes_df["lag_2_days"] = dalidata_df.reindex(lag_2_day_dt)[
-        "value"
+        "WAARDE"
     ].values
     predict_datetimes_df["lag_3_days"] = dalidata_df.reindex(lag_3_day_dt)[
-        "value"
+        "WAARDE"
     ].values
     predict_datetimes_df["lag_4_days"] = dalidata_df.reindex(lag_4_day_dt)[
-        "value"
+        "WAARDE"
     ].values
     predict_datetimes_df["lag_5_days"] = dalidata_df.reindex(lag_5_day_dt)[
-        "value"
+        "WAARDE"
     ].values
     predict_datetimes_df["lag_6_days"] = dalidata_df.reindex(lag_6_day_dt)[
-        "value"
+        "WAARDE"
     ].values
     predict_datetimes_df["lag_7_days"] = dalidata_df.reindex(lag_7_day_dt)[
-        "value"
+        "WAARDE"
     ].values
 
     return predict_datetimes_df
