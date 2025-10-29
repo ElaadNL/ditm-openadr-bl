@@ -140,7 +140,7 @@ async def get_capacity_limitation_event(
     Args:
         actions (PredictionActionsBase): The actions to use.
         from_date (datetime): The start time (inclusive) from which to fetch OpenADR events.
-        to_date (datetime): The end time (exclusive) from which to fetch OpenADR events.
+        to_date (datetime): The end time (inclusive) from which to fetch OpenADR events.
 
     Returns:
         Event | None: The OpenADR3 capacity limitation event. None if no data to base the event on could be retrieved.
