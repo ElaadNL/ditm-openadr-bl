@@ -16,7 +16,7 @@ from src.config import MAX_CAPACITY, MOCK_EAN_NUMBER, PROGRAM_ID, VEN_NAME
 from src.models.predicted_load import PredictedGridAssetLoad
 
 
-class PredictionActionsBase[ReadOnlySession](ABC):
+class PredictionActionsBase[ReadOnlySession, WriteSession](ABC):
     """Abstract class which contains methods used by this workflow.
 
     These methods are implemented on a higher level and provided to the functions of this
@@ -26,6 +26,10 @@ class PredictionActionsBase[ReadOnlySession](ABC):
     @abstractmethod
     def get_query_api(self) -> ReadOnlySession:
         """Retrieve a read-only session to the database."""
+
+    @abstractmethod
+    def get_write_api(self) -> WriteSession:
+        """Retrieve a write session to the database."""
 
     @abstractmethod
     async def get_predicted_grid_asset_load(
@@ -40,6 +44,19 @@ class PredictionActionsBase[ReadOnlySession](ABC):
 
         Returns:
             list[PredictedGridAssetLoad]: The list of predicted grid asset loads.
+        """
+
+    @abstractmethod
+    async def audit_predicted_grid_asset_loads(
+        self,
+        write_api: WriteSession,
+        predicted_grid_asset_loads: list[PredictedGridAssetLoad],
+    ) -> None:
+        """Audit predicted grid asset loads by storing them in the database.
+
+        Args:
+            write_api (WriteSession): The write connection to the database.
+            predicted_grid_asset_loads (list[PredictedGridAssetLoad]): The list of predicted grid asset loads to audit.
         """
 
 
@@ -139,5 +156,10 @@ async def get_capacity_limitation_event(
             "get_capacity_limitation_event: No predictions could be retrieved, returning None."
         )
         return None
+
+    write_api = actions.get_write_api()
+    await actions.audit_predicted_grid_asset_loads(
+        write_api, predicted_grid_asset_loads
+    )
 
     return _generate_capacity_limitation_event(predicted_grid_asset_loads, MAX_CAPACITY)
