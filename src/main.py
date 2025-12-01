@@ -102,6 +102,7 @@ async def main() -> None:
 
     logger.info("Python timer trigger function executed.")
 
+
 @bp.schedule(
     schedule="0 55 7 * * *",
     arg_name="myTimer",
