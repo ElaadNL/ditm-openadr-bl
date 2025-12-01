@@ -4,7 +4,7 @@ from decouple import config
 VTN_BASE_URL = config("VTN_BASE_URL")
 
 # The name of the VEN to target the capacity limitation events generated from this BL to.
-VEN_NAME = config("VEN_NAME", cast=str)
+VEN_NAMES = config("VEN_NAMES", cast=str)
 MOCK_EAN_NUMBER = config("MOCK_EAN_NUMBER", cast=str)
 
 # The program ID of the OpenADR3 program to write the capacity limitation events to.

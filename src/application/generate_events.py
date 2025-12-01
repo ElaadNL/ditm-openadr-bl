@@ -12,7 +12,7 @@ from openadr3_client.models.common.unit import Unit
 from openadr3_client.models.common.target import Target
 
 from src.logger import logger
-from src.config import MAX_CAPACITY, MOCK_EAN_NUMBER, PROGRAM_ID, VEN_NAME
+from src.config import MAX_CAPACITY, MOCK_EAN_NUMBER, PROGRAM_ID, VEN_NAMES
 from src.models.predicted_load import PredictedGridAssetLoad
 
 
@@ -126,7 +126,7 @@ def _generate_capacity_limitation_event(
         ),
         intervals=tuple(intervals),
         targets=(
-            Target(type="VEN_NAME", values=(VEN_NAME,)),
+            Target(type="VEN_NAME", values=tuple(VEN_NAMES.split(","))),
             Target(type="POWER_SERVICE_LOCATION", values=(MOCK_EAN_NUMBER,)),
         ),
     )
