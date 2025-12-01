@@ -102,11 +102,6 @@ async def main() -> None:
 
     logger.info("Python timer trigger function executed.")
 
-
-# if __name__ == "__main__":
-#     asyncio.run(main())
-
-
 @bp.schedule(
     schedule="0 55 7 * * *",
     arg_name="myTimer",
