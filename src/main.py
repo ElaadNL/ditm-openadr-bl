@@ -66,7 +66,7 @@ async def _clean_up_old_events(bl_client: BusinessLogicClient) -> None:
     events = bl_client.events.get_events(
         program_id=PROGRAM_ID,
         pagination=None,
-        target=TargetFilter(target_type="VEN_NAME", target_values=tuple(VEN_NAMES.split(","))),
+        target=TargetFilter(target_type="VEN_NAME", target_values=VEN_NAMES.split(",")),
     )
 
     for event in events:
