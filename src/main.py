@@ -13,7 +13,7 @@ from src.infrastructure.prediction_actions_impl import PredictionActionsInfluxDB
 from src.logger import logger
 from src.config import (
     PROGRAM_ID,
-    VEN_NAME,
+    VEN_NAMES,
     VTN_BASE_URL,
     OAUTH_CLIENT_ID,
     OAUTH_CLIENT_SECRET,
@@ -66,7 +66,7 @@ async def _clean_up_old_events(bl_client: BusinessLogicClient) -> None:
     events = bl_client.events.get_events(
         program_id=PROGRAM_ID,
         pagination=None,
-        target=TargetFilter(target_type="VEN_NAME", target_values=[VEN_NAME]),
+        target=TargetFilter(target_type="VEN_NAME", target_values=VEN_NAMES.split(",")),
     )
 
     for event in events:
