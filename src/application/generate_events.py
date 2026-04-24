@@ -86,7 +86,7 @@ def _generate_capacity_limitation_intervals(
                 type=EventPayloadType.IMPORT_CAPACITY_LIMIT,
                 values=(
                     predicted_grid_asset_loads.flex_capacity_required(max_capacity)
-                    or 22,
+                    or 100,
                 ),
             ),
         ),

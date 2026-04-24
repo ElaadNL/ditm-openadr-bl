@@ -54,7 +54,7 @@ class PredictedGridAssetLoad:
         """
         min_guaranteed_capacity = 4
         max_capacity_of_pod = (
-            22  # TODO: configure based on input from actual battery when available.
+            100
         )
         max_excess = 50
 
