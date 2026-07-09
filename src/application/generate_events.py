@@ -75,6 +75,7 @@ def _generate_capacity_limitation_intervals(
     Returns:
         Interval[EventPayload]: The capacity limitation interval.
     """
+
     return Interval(
         id=interval_id,
         interval_period=IntervalPeriod(
@@ -84,10 +85,7 @@ def _generate_capacity_limitation_intervals(
         payloads=(
             EventPayload(
                 type=EventPayloadType.IMPORT_CAPACITY_LIMIT,
-                values=(
-                    predicted_grid_asset_loads.flex_capacity_required(max_capacity)
-                    or 100,
-                ),
+                values=(20 if interval_id % 2 == 0 else 5,),
             ),
         ),
     )
