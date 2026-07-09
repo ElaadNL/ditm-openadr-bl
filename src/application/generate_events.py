@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timedelta
 from openadr3_client.models.event.event import NewEvent
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
@@ -75,6 +75,7 @@ def _generate_capacity_limitation_intervals(
     Returns:
         Interval[EventPayload]: The capacity limitation interval.
     """
+
     return Interval(
         id=interval_id,
         interval_period=IntervalPeriod(
@@ -84,10 +85,7 @@ def _generate_capacity_limitation_intervals(
         payloads=(
             EventPayload(
                 type=EventPayloadType.IMPORT_CAPACITY_LIMIT,
-                values=(
-                    predicted_grid_asset_loads.flex_capacity_required(max_capacity)
-                    or 100,
-                ),
+                values=(100 if interval_id % 2 == 0 else 20,),
             ),
         ),
     )
@@ -105,15 +103,24 @@ def _generate_capacity_limitation_event(
     Returns:
         Event: The capacity limitation event.
     """
+    sub_interval_duration = timedelta(minutes=5)
+    expanded_loads = [
+        PredictedGridAssetLoad(
+            time=load.time + i * sub_interval_duration,
+            load=load.load,
+            duration=sub_interval_duration,
+        )
+        for load in predicted_grid_asset_loads
+        for i in range(int(load.duration / sub_interval_duration))
+    ]
+
     intervals = [
         _generate_capacity_limitation_intervals(
             interval_id=interval_id,
-            predicted_grid_asset_loads=predicted_grid_asset_load,
+            predicted_grid_asset_loads=expanded_load,
             max_capacity=max_capacity,
         )
-        for interval_id, predicted_grid_asset_load in enumerate(
-            predicted_grid_asset_loads
-        )
+        for interval_id, expanded_load in enumerate(expanded_loads)
     ]
 
     return NewEvent(
