@@ -1,0 +1,13 @@
+{
+  "first_interval_utc": "2026-08-03T22:00:00Z",
+  "generated_at": "2026-08-04T09:18:25.721271Z",
+  "generator": "capacity_profile",
+  "generator_version": "1.0",
+  "interval_count": 2688,
+  "last_interval_end_utc": "2026-08-31T22:00:00Z",
+  "max_kw": 100.0,
+  "min_kw": 20.0,
+  "period_end_local": "2026-09-01T00:00:00+02:00",
+  "period_start_local": "2026-08-04T00:00:00+02:00",
+  "timezone": "Europe/Amsterdam"
+}
