@@ -111,3 +111,8 @@ async def main() -> None:
 )
 async def generate_events_for_tomorrow(myTimer: func.TimerRequest) -> None:
     await main()
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
