@@ -103,7 +103,7 @@ def _generate_capacity_limitation_event(
     Returns:
         Event: The capacity limitation event.
     """
-    sub_interval_duration = timedelta(minutes=5)
+    sub_interval_duration = timedelta(minutes=15)
     expanded_loads = [
         PredictedGridAssetLoad(
             time=load.time + i * sub_interval_duration,

@@ -6,7 +6,7 @@ authors = [
     {name = "Nick van der Burgt", email = "nick.van.der.burgt@elaad.nl"}
 ]
 readme = "README.md"
-requires-python = ">=3.12, <4"
+requires-python = ">=3.12, <3.14"
 dependencies = [
     "openadr3-client-gac-compliance (==2.0.0)",
     "python-decouple (>=3.8,<4.0)",
