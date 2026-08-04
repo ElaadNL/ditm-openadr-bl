@@ -87,13 +87,29 @@ poetry run python -m src.tools.profile generate \
 ```
 
 The period is given as `--days`, `--weeks`, `--months` or an explicit `--end`.
+`--end` is exclusive, so covering a month up to and including 31 August means
+ending on 1 September:
+
+```shell
+poetry run python -m src.tools.profile generate \
+    --start 2026-08-04 --end 2026-09-01 --min-kw 20 --max-kw 100 \
+    --out profiles/august-2026.csv
+```
+
 Generating needs no configuration, so it works without a `.env`.
 
 Profiles live in `profiles/` and are committed, so they can be reviewed and
-reused as a reference. Two files are written: the CSV, holding one row per
-interval, and a `<name>.meta.json` sidecar holding the bounds, the band and the
-generator version. Regenerating a profile produces a byte identical CSV; only
-the sidecar carries a timestamp.
+reused as a reference:
+
+| Profile                              | Period                    | Intervals |
+| ------------------------------------ | ------------------------- | --------- |
+| `profiles/august-2026.csv`           | 4 August - 31 August 2026 | 2688      |
+| `profiles/example-week-2026-08-03.csv` | one example week        | 672       |
+
+Two files are written: the CSV, holding one row per interval, and a
+`<name>.meta.json` sidecar holding the bounds, the band and the generator
+version. Regenerating a profile produces a byte identical CSV; only the sidecar
+carries a timestamp.
 
 ```csv
 start_utc,start_local,duration,value_kw,payload_type,unit
@@ -107,44 +123,60 @@ since the congestion windows only make sense in local time.
 
 ```shell
 source scripts/dotenv.sh
-poetry run python -m src.tools.profile send profiles/example-week-2026-08-03.csv \
-    --start 2026-08-17 --dry-run
+poetry run python -m src.tools.profile send profiles/august-2026.csv --dry-run
 ```
 
-The whole period is published as a single event, so a month becomes one event of
-close to 3.000 intervals and roughly 420 KiB of JSON. `--dry-run` builds and
-sizes that event without sending it, which is worth doing before the first real
-send against a VTN whose limits are unknown.
+The whole period is published as a single event. That event is large: 28 days
+comes to 2688 intervals and 376 KiB of JSON, a full 31 day month to 2980
+intervals and 417 KiB. `--dry-run` builds and sizes it without sending, which is
+worth doing whenever the period grows.
 
 `--start` rebases the profile onto another date, keeping the local time of day
 and the exact spacing of the intervals. Add `--align-weekday` to round the shift
 to whole weeks, so a working day keeps landing on a working day. Without
 `--start` the timestamps in the CSV are used as they are, and a profile that
-starts in the past is refused unless `--allow-past` is passed.
+starts in the past is refused unless `--allow-past` is passed. A profile that
+starts at midnight today needs that flag, and the intervals that have already
+elapsed are published along with the rest.
 
 Sending deletes the events already in the VTN for the targeted VENs first, the
 same way the scheduled function does. Pass `--no-cleanup` to keep them.
+
+The reverse holds as well: the scheduled function in `src/main.py` runs at 07:55
+and deletes the events for those VENs before publishing its own prediction based
+event. A profile published by hand survives only until the next run of that
+timer, so disable it while a long profile is meant to stand.
 
 ### Validating
 
 Compare the profile against what the VTN stored:
 
 ```shell
-poetry run python -m src.tools.profile verify-vtn \
-    profiles/example-week-2026-08-03.csv --start 2026-08-17
+poetry run python -m src.tools.profile verify-vtn profiles/august-2026.csv
+```
+
+```
+Comparing against 1 event(s): c56eaa13-716a-4fd4-bfd9-17c182bf0a8b
+Reference intervals: 2688
+Observed intervals : 2688
+Missing            : 0
+Unexpected         : 0
+Differing          : 0
+MATCH: the observed profile is identical to the reference.
 ```
 
 Compare it against what the vendor hosting the VEN reports as received:
 
 ```shell
-poetry run python -m src.tools.profile verify-vendor \
-    profiles/example-week-2026-08-03.csv --received vendor-export.csv \
-    --start 2026-08-17
+poetry run python -m src.tools.profile verify-vendor profiles/august-2026.csv \
+    --received vendor-export.csv
 ```
 
 Both report missing, unexpected and differing intervals, and exit with 1 when
-they find any. Use the same `--start` that was used to send, so the reference
-lines up with what was published. `--tolerance-kw` allows a margin on the values.
+they find any. Pass the same `--start` that was used to send, so the reference
+lines up with what was published; leave it out when the profile was sent as it
+is. `--tolerance-kw` allows a margin on the values, and `--limit` caps how many
+differences are listed per category.
 
 The vendor export is read by `src/infrastructure/vendor_feedback.py`, which
 defaults to the schema written by this tool and detects comma, semicolon and tab
