@@ -178,6 +178,34 @@ lines up with what was published; leave it out when the profile was sent as it
 is. `--tolerance-kw` allows a margin on the values, and `--limit` caps how many
 differences are listed per category.
 
+### Comparing against the charge point operator's message log
+
+When the operator sends back its OCPP message log rather than a table of
+intervals, `merge` reads the SetChargingProfile calls from it, lays them next to
+the published profile and writes both sides into one file:
+
+```shell
+poetry run python -m src.tools.profile merge profiles/august-2026.csv \
+    --ocpp-log charger-message-logs.csv \
+    --out reports/august-2026-vs-operator.csv \
+    --plot reports/august-2026-vs-operator.svg
+```
+
+The merged CSV holds `published_kw`, `received_kw`, `applied_kw` and the
+difference per interval, and `--plot` writes a standalone SVG that overlays the
+three. Operators tend to hold a safety margin below the signal, so
+`received_kw` is the limit read back through the buffer the log itself reports,
+while `applied_kw` is what the charger was actually given.
+
+An interval is compared against the limit that was in force for most of it, not
+against the limit exactly on its boundary: a change takes an operator seconds to
+push, and that is latency rather than a deviation. How fast each change landed
+is reported separately, per change.
+
+Only the part of the profile the log covers is compared. Intervals before the
+first and after the last message come out as `not covered` instead of as a
+difference.
+
 The vendor export is read by `src/infrastructure/vendor_feedback.py`, which
 defaults to the schema written by this tool and detects comma, semicolon and tab
 separated files. When the real export looks different, point the tool at the

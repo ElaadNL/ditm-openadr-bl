@@ -202,6 +202,26 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     verify_vendor.set_defaults(handler=_handle_verify_vendor)
 
+    merge = commands.add_parser(
+        "merge",
+        parents=[rebase_options, compare_options],
+        help="Merge a profile with the OCPP message log of the charge point operator.",
+    )
+    merge.add_argument("csv", type=Path, help="The published profile.")
+    merge.add_argument(
+        "--ocpp-log",
+        type=Path,
+        required=True,
+        help="The charger message log exported by the operator.",
+    )
+    merge.add_argument(
+        "--out", type=Path, required=True, help="CSV file to write the merge to."
+    )
+    merge.add_argument(
+        "--plot", type=Path, help="Write an SVG overlay of the two profiles."
+    )
+    merge.set_defaults(handler=_handle_merge)
+
     return parser
 
 
@@ -375,6 +395,91 @@ def _handle_verify_vendor(args: argparse.Namespace) -> int:
     print(f"Read {len(observed)} interval(s) from {args.received}")
 
     return _report(compare_profiles(expected, observed, args.tolerance_kw), args.limit)
+
+
+def _handle_merge(args: argparse.Namespace) -> int:
+    """Merge a profile with an OCPP message log and report the result.
+
+    Args:
+        args (argparse.Namespace): The parsed arguments.
+
+    Returns:
+        int: The exit code.
+    """
+    from src.application.profile_merge import (
+        covered_window,
+        find_transitions,
+        merge_profile_with_log,
+        summarize_merge,
+    )
+    from src.infrastructure.merged_csv import write_merged_profile
+    from src.infrastructure.step_plot import render_overlay_svg
+    from src.infrastructure.vendor_feedback import read_ocpp_limit_steps
+
+    published = _load_reference(args)
+    log = read_ocpp_limit_steps(args.ocpp_log)
+
+    merged = merge_profile_with_log(published, log, args.tolerance_kw)
+    transitions = find_transitions(merged, log)
+    summary = summarize_merge(merged, transitions)
+    window = covered_window(merged)
+
+    if window is None:
+        print("The message log does not overlap the profile at all.")
+        return _EXIT_DIFFERENCES
+
+    print(f"Charger    : {', '.join(log.charge_point_ids)}")
+    print(f"Log        : {log.message_count} SetChargingProfile calls")
+    print(f"Buffer     : {log.buffer_fraction:.0%} held back by the operator")
+    print(
+        f"Overlap    : {window[0].astimezone(AMSTERDAM)} .. "
+        f"{window[1].astimezone(AMSTERDAM)}"
+    )
+    print(f"Compared   : {summary.compared} interval(s)")
+    print(f"Identical  : {summary.matching}")
+    print(f"Differing  : {summary.deviating}")
+    print(f"Uncovered  : {summary.not_covered} interval(s) of the profile")
+    print(f"Max delta  : {summary.max_abs_delta_kw:g} kW")
+    print(
+        f"Changes    : {summary.followed_transitions} of {summary.transitions} followed"
+        + (
+            f", slowest after {summary.worst_latency}"
+            if summary.worst_latency is not None
+            else ""
+        )
+    )
+
+    write_merged_profile(args.out, merged)
+    print(f"Wrote {args.out}")
+
+    if args.plot:
+        title = "Published capacity limit against what the charger received"
+        subtitle = (
+            f"{', '.join(log.charge_point_ids)} · "
+            f"{window[0].astimezone(AMSTERDAM):%-d %b %H:%M} - "
+            f"{window[1].astimezone(AMSTERDAM):%-d %b %H:%M} · "
+            f"operator holds back {log.buffer_fraction:.0%}"
+        )
+        args.plot.parent.mkdir(parents=True, exist_ok=True)
+        args.plot.write_text(
+            render_overlay_svg(merged, summary, title, subtitle), encoding="utf-8"
+        )
+        print(f"Wrote {args.plot}")
+
+    for transition in transitions[: args.limit]:
+        landed = (
+            f"after {transition.latency}"
+            if transition.latency is not None
+            else "never applied"
+        )
+        print(
+            f"  {transition.at.astimezone(AMSTERDAM):%d-%m %H:%M} "
+            f"{transition.from_kw:g} -> {transition.to_kw:g} kW, {landed}"
+        )
+    if summary.transitions > args.limit:
+        print(f"  ... {summary.transitions - args.limit} more change(s).")
+
+    return _EXIT_OK if summary.matches else _EXIT_DIFFERENCES
 
 
 def _load_reference(args: argparse.Namespace) -> list[CapacitySignal]:
